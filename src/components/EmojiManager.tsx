@@ -1,0 +1,310 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { FiSmile, FiPlus, FiTrash2, FiUpload, FiX, FiCheck, FiLoader } from 'react-icons/fi';
+import { useAuth } from '@/lib/auth';
+import { CustomEmoji } from '@/types';
+import { emojiService } from '@/lib/database';
+import Card from '@/components/Card';
+import Image from 'next/image';
+
+export default function EmojiManager() {
+  const { user } = useAuth();
+  const [emojis, setEmojis] = useState<CustomEmoji[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
+  const [newEmojiName, setNewEmojiName] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (user?.role === 'admin') {
+      loadEmojis();
+    }
+  }, [user]);
+
+  // Create preview URL when file is selected
+  useEffect(() => {
+    if (!selectedFile) {
+      setPreviewUrl(null);
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(selectedFile);
+    setPreviewUrl(objectUrl);
+
+    // Free memory when component unmounts
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [selectedFile]);
+
+  const loadEmojis = async () => {
+    try {
+      setIsLoading(true);
+      const emojiList = await emojiService.getAll();
+      setEmojis(emojiList);
+    } catch (error) {
+      console.error('Error loading emojis:', error);
+      setError('Failed to load custom emojis');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) {
+      setSelectedFile(null);
+      return;
+    }
+
+    const file = e.target.files[0];
+    
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setError('Please select an image file');
+      return;
+    }
+    
+    // Validate file size (max 200KB)
+    if (file.size > 200 * 1024) {
+      setError('Image size should be less than 200KB');
+      return;
+    }
+
+    setSelectedFile(file);
+    setError(null);
+  };
+
+  const uploadToCloudinary = async (file: File): Promise<string> => {
+    // Create a FormData object to send the file
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', 'emoji');
+
+    // Upload using our API route
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to upload image');
+    }
+
+    const data = await response.json();
+    return data.url;
+  };
+
+  const handleAddEmoji = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!newEmojiName.trim()) {
+      setError('Please enter an emoji name');
+      return;
+    }
+
+    if (!selectedFile) {
+      setError('Please select an image file');
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+      setError(null);
+      
+      // Upload image to Cloudinary
+      const imageUrl = await uploadToCloudinary(selectedFile);
+      
+      // Add emoji to database
+      await emojiService.create({
+        name: newEmojiName.trim(),
+        imageUrl,
+        createdBy: user?.id || ''
+      });
+      
+      // Reset form
+      setNewEmojiName('');
+      setSelectedFile(null);
+      setPreviewUrl(null);
+      
+      // Show success message
+      setSuccess('Emoji added successfully');
+      setTimeout(() => setSuccess(null), 3000);
+      
+      // Reload emojis
+      await loadEmojis();
+    } catch (error) {
+      console.error('Error adding emoji:', error);
+      setError('Failed to add emoji');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleDeleteEmoji = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this emoji?')) {
+      return;
+    }
+
+    try {
+      await emojiService.delete(id);
+      setEmojis(prev => prev.filter(emoji => emoji.id !== id));
+      setSuccess('Emoji deleted successfully');
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (error) {
+      console.error('Error deleting emoji:', error);
+      setError('Failed to delete emoji');
+    }
+  };
+
+  if (!user || user.role !== 'admin') {
+    return null;
+  }
+
+  return (
+    <Card>
+      <div className="flex items-center space-x-3 mb-6">
+        <FiSmile className="text-[#D91CD2]" size={24} />
+        <h2 className="text-2xl font-bold">Custom Emoji Manager</h2>
+      </div>
+
+      {error && (
+        <div className="bg-red-500/20 border border-red-500 rounded-lg p-3 mb-6 flex items-center">
+          <FiX className="text-red-500 mr-2" />
+          <p className="text-red-500 text-sm">{error}</p>
+        </div>
+      )}
+
+      {success && (
+        <div className="bg-green-500/20 border border-green-500 rounded-lg p-3 mb-6 flex items-center">
+          <FiCheck className="text-green-500 mr-2" />
+          <p className="text-green-500 text-sm">{success}</p>
+        </div>
+      )}
+
+      {/* Add New Emoji Form */}
+      <form onSubmit={handleAddEmoji} className="mb-8 bg-gray-800 p-4 rounded-lg">
+        <h3 className="text-lg font-medium mb-4">Add New Emoji</h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-white">Emoji Name</label>
+            <input
+              type="text"
+              value={newEmojiName}
+              onChange={(e) => setNewEmojiName(e.target.value)}
+              className="input-primary w-full"
+              placeholder="e.g., cool_dance"
+              disabled={isUploading}
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-white">Emoji Image</label>
+            <div className="relative">
+              <input
+                type="file"
+                onChange={handleFileChange}
+                className="hidden"
+                id="emoji-upload"
+                accept="image/*"
+                disabled={isUploading}
+              />
+              <label
+                htmlFor="emoji-upload"
+                className="input-primary w-full flex items-center cursor-pointer"
+              >
+                <FiUpload className="mr-2" />
+                {selectedFile ? selectedFile.name : 'Choose file...'}
+              </label>
+            </div>
+            <p className="text-xs text-gray-400">Max size: 200KB. Recommended: 64x64px</p>
+          </div>
+          
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-transparent select-none">Add</label>
+            <button
+              type="submit"
+              disabled={isUploading}
+              className="btn-primary w-full flex items-center justify-center"
+            >
+              {isUploading ? (
+                <FiLoader className="animate-spin mr-2" />
+              ) : (
+                <FiPlus className="mr-2" />
+              )}
+              Add Emoji
+            </button>
+          </div>
+        </div>
+        
+        {previewUrl && (
+          <div className="mt-4 flex items-center space-x-4">
+            <div className="w-16 h-16 bg-gray-700 rounded-lg overflow-hidden flex items-center justify-center">
+              <Image
+                src={previewUrl}
+                alt="Emoji preview"
+                width={64}
+                height={64}
+                className="max-w-full max-h-full"
+              />
+            </div>
+            <div>
+              <h4 className="font-medium">Preview</h4>
+              <p className="text-sm text-gray-400">This is how your emoji will appear</p>
+            </div>
+          </div>
+        )}
+      </form>
+
+      {/* Emoji List */}
+      <div>
+        <h3 className="text-lg font-medium mb-4">Your Custom Emojis</h3>
+        
+        {isLoading ? (
+          <div className="text-center py-8">
+            <FiLoader className="animate-spin mx-auto text-2xl mb-2" />
+            <p className="text-gray-400">Loading emojis...</p>
+          </div>
+        ) : emojis.length === 0 ? (
+          <div className="text-center py-8 bg-gray-800 rounded-lg">
+            <FiSmile className="mx-auto text-4xl text-gray-500 mb-4" />
+            <p className="text-gray-400">No custom emojis added yet</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {emojis.map(emoji => (
+              <motion.div
+                key={emoji.id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="bg-gray-800 rounded-lg p-3 flex flex-col items-center"
+              >
+                <div className="w-16 h-16 bg-gray-700 rounded-lg overflow-hidden flex items-center justify-center mb-2">
+                  <Image
+                    src={emoji.imageUrl}
+                    alt={emoji.name}
+                    width={64}
+                    height={64}
+                    className="max-w-full max-h-full"
+                  />
+                </div>
+                <p className="text-sm font-medium mb-2 text-center truncate w-full">{emoji.name}</p>
+                <button
+                  onClick={() => handleDeleteEmoji(emoji.id)}
+                  className="text-red-400 hover:text-red-300 text-sm flex items-center"
+                >
+                  <FiTrash2 className="mr-1" size={12} />
+                  Delete
+                </button>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </div>
+    </Card>
+  );
+}
