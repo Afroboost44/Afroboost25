@@ -1,0 +1,17 @@
+# Build & dependencies
+.next/
+node_modules/
+dist/
+.vercel/
+
+# Environments
+.env
+.env.local
+.env.*.local
+serviceAccountKey.json
+firebase-service-*.json
+
+# Logs & misc
+npm-debug.log*
+yarn-error.log*
+.DS_Store
