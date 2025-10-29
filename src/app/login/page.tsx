@@ -10,6 +10,7 @@ import { useAuth } from '@/lib/auth';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { signIn } from 'next-auth/react'; // 👈 NEW
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -25,11 +26,9 @@ export default function Login() {
   const router = useRouter();
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  
-  // Simple redirect if already logged in
+
   useEffect(() => {
     if (user && !authLoading) {
-      console.log('User already logged in, redirecting to home');
       router.replace('/');
     }
   }, [user, authLoading, router]);
@@ -38,60 +37,39 @@ export default function Login() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
-  });
+  } = useForm<LoginFormData>({ resolver: zodResolver(loginSchema) });
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     setError('');
-    console.log('Login form submitted:', data.email);
-
     try {
       const success = await login(data.email, data.password);
-      
-      if (success) {
-        console.log('Login successful, refreshing window');
-        window.location.reload();
-      } else {
-        console.log('Login failed');
-        setError('Invalid email or password. Please check your credentials and try again.');
-      }
+      if (success) window.location.reload();
+      else setError('Invalid email or password. Please check your credentials and try again.');
     } catch (err: any) {
-      console.error('Login error:', err);
-      
-      // Provide more specific error messages
-      if (err?.code === 'auth/user-not-found') {
-        setError('User not found. Please check your email or sign up for an account.');
-      } else if (err?.code === 'auth/wrong-password') {
-        setError('Incorrect password. Please try again.');
-      } else if (err?.code === 'auth/invalid-credential') {
-        setError('Invalid credentials. Please check your email and password.');
-      } else if (err?.code === 'auth/network-request-failed') {
-        setError('Network error. Please check your internet connection.');
-      } else {
-        setError(`An error occurred: ${err?.message || 'Please try again later.'}`);
-      }
+      if (err?.code === 'auth/user-not-found') setError('User not found. Please check your email or sign up for an account.');
+      else if (err?.code === 'auth/wrong-password') setError('Incorrect password. Please try again.');
+      else if (err?.code === 'auth/invalid-credential') setError('Invalid credentials. Please check your email and password.');
+      else if (err?.code === 'auth/network-request-failed') setError('Network error. Please check your internet connection.');
+      else setError(`An error occurred: ${err?.message || 'Please try again later.'}`);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Show simple loading state while checking authentication
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-[#D91CD2] border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-12 h-12 border-4 border-[#D91CD2] border-t-transparent rounded-full animate-spin" />
         <p className="ml-4 text-lg">Loading...</p>
       </div>
     );
   }
 
-  // Don't render if user is authenticated (prevent flash)
   if (user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-[#D91CD2] border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-12 h-12 border-4 border-[#D91CD2] border-t-transparent rounded-full animate-spin" />
         <p className="ml-4 text-lg">Redirecting...</p>
       </div>
     );
@@ -136,13 +114,11 @@ export default function Login() {
                   id="email"
                   type="email"
                   {...register('email')}
-                  className="input-primary w-full pl-12" // Increased padding for icon
+                  className="input-primary w-full pl-12"
                   placeholder="you@example.com"
                 />
               </div>
-              {errors.email && (
-                <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
-              )}
+              {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
             </div>
 
             <div className="space-y-2">
@@ -157,13 +133,11 @@ export default function Login() {
                   id="password"
                   type="password"
                   {...register('password')}
-                  className="input-primary w-full pl-12" // Increased padding for icon
+                  className="input-primary w-full pl-12"
                   placeholder="••••••••"
                 />
               </div>
-              {errors.password && (
-                <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
-              )}
+              {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
             </div>
 
             <div className="flex items-center justify-between">
@@ -183,20 +157,30 @@ export default function Login() {
               </Link>
             </div>
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="btn-primary w-full flex justify-center items-center"
-            >
+            <button type="submit" disabled={isLoading} className="btn-primary w-full flex justify-center items-center">
               {isLoading ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
                 t.signIn
               )}
             </button>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-[#D91CD2]/10">
+          {/* Divider */}
+          <div className="mt-8 flex items-center">
+            <div className="flex-1 h-px bg-[#D91CD2]/20" />
+            <span className="px-3 text-xs uppercase tracking-wider text-gray-400">ou</span>
+            <div className="flex-1 h-px bg-[#D91CD2]/20" />
+          </div>
+
+          {/* Google button */}
+          <div className="mt-6">
+            <button
+              onClick={() => signIn('google', { callbackUrl: '/' })}
+              className="w-full border border-[#D91CD2]/40 rounded-lg py-3 hover:bg-[#D91CD2]/10 transition"
+            >
+              Continuer avec Google
+            </button>
           </div>
         </div>
       </motion.div>
