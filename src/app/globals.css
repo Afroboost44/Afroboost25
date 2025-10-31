@@ -1,0 +1,253 @@
+<<<<<<< HEAD
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@import "tailwindcss";
+
+:root {
+  --background: #000000;
+  --foreground: #FFFFFF;
+  --primary: #D91CD2;
+  --secondary: #7000FF;
+  --accent: #00EEFF;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --font-sans: 'Poppins', 'Montserrat', 'Inter', sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #000000;
+    --foreground: #FFFFFF;
+  }
+}
+
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Poppins', 'Montserrat', 'Inter', sans-serif;
+}
+
+/* Custom Button Styles */
+.btn-primary {
+  @apply bg-[#D91CD2] text-white font-medium py-2 px-6 rounded-full hover:bg-[#c019ba] transition-all duration-300 shadow-lg text-sm;
+}
+
+.btn-secondary {
+  @apply bg-transparent border-2 border-[#D91CD2] text-white font-medium py-2 px-6 rounded-full hover:bg-[#D91CD2]/10 transition-all duration-300 text-sm;
+}
+
+/* Card Styles */
+.card {
+  @apply bg-black/80 border border-[#D91CD2]/30 rounded-xl p-5 shadow-lg shadow-[#D91CD2]/20;
+}
+
+/* Animation Classes */
+.hover-scale {
+  @apply hover:scale-102 transition-all duration-300;
+}
+
+/* Input Styles */
+.input-primary {
+  @apply bg-black/50 border-2 border-[#D91CD2]/50 rounded-lg p-2 pl-12 text-white focus:outline-none focus:border-[#D91CD2] transition-all duration-300;
+}
+
+/* Page Transitions */
+.page-transition {
+  @apply opacity-0 transition-opacity duration-500;
+}
+
+.page-transition-active {
+  @apply opacity-100;
+}
+
+/* Gradient Text */
+.gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#D91CD2] to-[#7000FF];
+}
+
+/* Navbar Styles */
+.navbar {
+  @apply fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-b border-[#D91CD2]/20;
+}
+
+/* Language Selector */
+.lang-selector {
+  @apply flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-[#D91CD2]/10 transition-all;
+}
+
+.lang-active {
+  @apply bg-[#D91CD2] text-white;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D91CD2;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #c019ba;
+}
+
+/* Add custom scale value */
+@layer utilities {
+  .scale-102 {
+    transform: scale(1.02);
+  }
+  
+  /* Hide scrollbar for horizontal scrolling */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Add spacing utilities */
+.content-spacing {
+  @apply max-w-7xl mx-auto px-4 md:px-6 lg:px-8;
+}
+
+.section-spacing {
+  @apply py-16 md:py-20;
+}
+=======
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@import "tailwindcss";
+
+:root {
+  --background: #000000;
+  --foreground: #FFFFFF;
+  --primary: #D91CD2;
+  --secondary: #7000FF;
+  --accent: #00EEFF;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --font-sans: 'Poppins', 'Montserrat', 'Inter', sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #000000;
+    --foreground: #FFFFFF;
+  }
+}
+
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Poppins', 'Montserrat', 'Inter', sans-serif;
+}
+
+/* Custom Button Styles */
+.btn-primary {
+  @apply bg-[#D91CD2] text-white font-medium py-2 px-6 rounded-full hover:bg-[#c019ba] transition-all duration-300 shadow-lg text-sm;
+}
+
+.btn-secondary {
+  @apply bg-transparent border-2 border-[#D91CD2] text-white font-medium py-2 px-6 rounded-full hover:bg-[#D91CD2]/10 transition-all duration-300 text-sm;
+}
+
+/* Card Styles */
+.card {
+  @apply bg-black/80 border border-[#D91CD2]/30 rounded-xl p-5 shadow-lg shadow-[#D91CD2]/20;
+}
+
+/* Animation Classes */
+.hover-scale {
+  @apply hover:scale-102 transition-all duration-300;
+}
+
+/* Input Styles */
+.input-primary {
+  @apply bg-black/50 border-2 border-[#D91CD2]/50 rounded-lg p-2 pl-12 text-white focus:outline-none focus:border-[#D91CD2] transition-all duration-300;
+}
+
+/* Page Transitions */
+.page-transition {
+  @apply opacity-0 transition-opacity duration-500;
+}
+
+.page-transition-active {
+  @apply opacity-100;
+}
+
+/* Gradient Text */
+.gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#D91CD2] to-[#7000FF];
+}
+
+/* Navbar Styles */
+.navbar {
+  @apply fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-b border-[#D91CD2]/20;
+}
+
+/* Language Selector */
+.lang-selector {
+  @apply flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-[#D91CD2]/10 transition-all;
+}
+
+.lang-active {
+  @apply bg-[#D91CD2] text-white;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D91CD2;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #c019ba;
+}
+
+/* Add custom scale value */
+@layer utilities {
+  .scale-102 {
+    transform: scale(1.02);
+  }
+}
+
+/* Add spacing utilities */
+.content-spacing {
+  @apply max-w-7xl mx-auto px-4 md:px-6 lg:px-8;
+}
+
+.section-spacing {
+  @apply py-16 md:py-20;
+}
+>>>>>>> ddd273af2a7b494359b5df1cd43dbc83468035f0

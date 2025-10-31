@@ -1,0 +1,329 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Advanced TWINT & Card Payment</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #f6f9fc;
+      }
+      
+      .payment-container {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+      }
+      
+      h2 {
+        color: #32325d;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      
+      .payment-tabs {
+        display: flex;
+        margin-bottom: 20px;
+        border-radius: 4px;
+        overflow: hidden;
+        border: 1px solid #e3e8ee;
+      }
+      
+      .tab {
+        flex: 1;
+        padding: 15px;
+        text-align: center;
+        background: #f8f9fa;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.2s;
+      }
+      
+      .tab.active {
+        background: #635bff;
+        color: white;
+      }
+      
+      .tab:not(.active):hover {
+        background: #e3e8ee;
+      }
+      
+      .amount-display {
+        background: #f8f9fa;
+        border: 1px solid #e3e8ee;
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 20px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: 600;
+        color: #32325d;
+      }
+      
+      .payment-method {
+        display: none;
+      }
+      
+      .payment-method.active {
+        display: block;
+      }
+      
+      #card-element {
+        background: white;
+        border: 1px solid #e3e8ee;
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+      
+      .twint-info {
+        background: #e8f4f8;
+        border: 1px solid #bee5eb;
+        border-radius: 4px;
+        padding: 20px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      
+      .twint-logo {
+        width: 80px;
+        height: 40px;
+        background: #ff6b35;
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+      
+      #pay-button {
+        background: #635bff;
+        border: none;
+        border-radius: 4px;
+        color: white;
+        font-size: 16px;
+        font-weight: 600;
+        padding: 15px;
+        width: 100%;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      
+      #pay-button:hover:not(:disabled) {
+        background: #5449eb;
+      }
+      
+      #pay-button:disabled {
+        background: #aab7c4;
+        cursor: not-allowed;
+      }
+      
+      .error-message {
+        color: #e25950;
+        font-size: 14px;
+        margin-top: 10px;
+      }
+      
+      .success-message {
+        color: #28a745;
+        font-size: 14px;
+        margin-top: 10px;
+        text-align: center;
+      }
+      
+      .loading {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid #ffffff;
+        border-radius: 50%;
+        border-top-color: transparent;
+        animation: spin 1s ease-in-out infinite;
+        margin-right: 8px;
+      }
+      
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="payment-container">
+      <h2>Swiss Payment Demo</h2>
+      
+      <div class="amount-display">
+        Amount: CHF 15.00
+      </div>
+      
+      <div class="payment-tabs">
+        <button class="tab active" data-method="card">💳 Card</button>
+        <button class="tab" data-method="twint">📱 TWINT</button>
+      </div>
+      
+      <form id="payment-form">
+        <div id="card-method" class="payment-method active">
+          <div id="card-element">
+            <!-- Stripe Elements will create form elements here -->
+          </div>
+        </div>
+        
+        <div id="twint-method" class="payment-method">
+          <div class="twint-info">
+            <div class="twint-logo">TWINT</div>
+            <p><strong>Pay with TWINT mobile app</strong></p>
+            <p>Click "Pay with TWINT" and you'll be redirected to complete the payment with your TWINT app.</p>
+          </div>
+        </div>
+        
+        <button type="submit" id="pay-button">
+          Pay CHF 15.00
+        </button>
+        
+        <div id="error-message" class="error-message"></div>
+        <div id="success-message" class="success-message"></div>
+      </form>
+    </div>
+
+    <script>
+      // Initialize Stripe
+      const stripe = Stripe('pk_live_51P7B76Rs7hrWkMqgxDFixW4XJNp0w6R4Y5XTK18I6MEUApeswmflemAFDpvC7Fqm8GAtl4dCTrvpHY7SYMlJj0ON00rm2IcyWU'); // Replace with your publishable key
+      const elements = stripe.elements();
+      
+      // Create card element
+      const cardElement = elements.create('card', {
+        style: {
+          base: {
+            fontSize: '16px',
+            color: '#424770',
+            '::placeholder': {
+              color: '#aab7c4',
+            },
+          },
+        },
+      });
+      
+      // Mount card element
+      cardElement.mount('#card-element');
+      
+      // Tab switching
+      let currentMethod = 'card';
+      const tabs = document.querySelectorAll('.tab');
+      const methods = document.querySelectorAll('.payment-method');
+      
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const method = tab.dataset.method;
+          
+          // Update active states
+          tabs.forEach(t => t.classList.remove('active'));
+          methods.forEach(m => m.classList.remove('active'));
+          
+          tab.classList.add('active');
+          document.getElementById(`${method}-method`).classList.add('active');
+          
+          currentMethod = method;
+          
+          // Update button text
+          const payButton = document.getElementById('pay-button');
+          if (method === 'twint') {
+            payButton.innerHTML = '📱 Pay with TWINT CHF 15.00';
+          } else {
+            payButton.innerHTML = '💳 Pay CHF 15.00';
+          }
+        });
+      });
+      
+      // Handle form submission
+      const form = document.getElementById('payment-form');
+      const payButton = document.getElementById('pay-button');
+      const errorMessage = document.getElementById('error-message');
+      const successMessage = document.getElementById('success-message');
+      
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        
+        // Disable button and show loading
+        payButton.disabled = true;
+        const originalText = payButton.innerHTML;
+        payButton.innerHTML = '<span class="loading"></span>Processing...';
+        errorMessage.textContent = '';
+        successMessage.textContent = '';
+        
+        try {
+          if (currentMethod === 'twint') {
+            // For TWINT, use Checkout Sessions (better support)
+            const response = await fetch('/create-checkout-session', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                amount_cents: 1500,
+                payment_method: 'twint'
+              }),
+            });
+            
+            const { url } = await response.json();
+            if (url) {
+              window.location.href = url;
+              return;
+            }
+          } else {
+            // For cards, use Payment Intent (embedded)
+            const response = await fetch('/create-payment-intent', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                amount_cents: 1500,
+                currency: 'chf'
+              }),
+            });
+            
+            const { client_secret } = await response.json();
+            
+            // Confirm payment with Stripe
+            const result = await stripe.confirmCardPayment(client_secret, {
+              payment_method: {
+                card: cardElement,
+              }
+            });
+            
+            if (result.error) {
+              errorMessage.textContent = result.error.message;
+            } else {
+              successMessage.textContent = 'Payment successful! Thank you for your purchase.';
+              form.style.display = 'none';
+            }
+          }
+        } catch (error) {
+          errorMessage.textContent = 'An error occurred. Please try again.';
+          console.error('Error:', error);
+        }
+        
+        // Re-enable button
+        payButton.disabled = false;
+        payButton.innerHTML = originalText;
+      });
+      
+      // Handle real-time validation errors from the card Element
+      cardElement.on('change', ({error}) => {
+        if (error) {
+          errorMessage.textContent = error.message;
+        } else {
+          errorMessage.textContent = '';
+        }
+      });
+    </script>
+  </body>
+</html>
