@@ -1,7 +1,8 @@
 {
-  "name": "new_project",
-  "version": "0.1.0",
+  "name": "afroboost",
+  "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -38,9 +39,9 @@
     "zustand": "^5.0.6"
   },
   "overrides": {
-  "react": "18.2.0",
-  "react-dom": "18.2.0"
-},
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
@@ -56,4 +57,3 @@
     "node": ">=18.17.0"
   }
 }
-
