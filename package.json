@@ -1,76 +1,6 @@
-<<<<<<< HEAD
 {
-  "name": "new_project",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "i18n:extract": "npx i18next-parser --config i18next-parser.config.js",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@hookform/resolvers": "^5.1.1",
-    "@paypal/react-paypal-js": "^8.8.3",
-    "@stripe/react-stripe-js": "^3.7.0",
-    "@stripe/stripe-js": "^7.4.0",
-    "@types/js-cookie": "^3.0.6",
-    "@types/nodemailer": "^6.4.17",
-    "@types/qrcode": "^1.5.5",
-    "@upstash/redis": "^1.35.1",
-    "apexcharts": "^3.54.1",
-    "bcryptjs": "^3.0.2",
-    "cloudinary": "^2.7.0",
-    "date-fns": "^4.1.0",
-    "ffmpeg-static": "^5.2.0",
-    "firebase": "^11.10.0",
-    "firebase-admin": "^13.4.0",
-    "fluent-ffmpeg": "^2.1.3",
-    "framer-motion": "^12.23.0",
-    "i18next": "^25.3.2",
-    "i18next-browser-languagedetector": "^8.2.0",
-    "js-cookie": "^3.0.5",
-    "jsqr": "^1.4.0",
-    "mongoose": "^8.16.2",
-    "next": "15.3.5",
-    "next-auth": "^4.24.11",
-    "next-intl": "^4.3.4",
-    "nodemailer": "^6.10.1",
-    "qrcode": "^1.5.4",
-    "react": "^19.0.0",
-    "react-apexcharts": "^1.7.0",
-    "react-dom": "^19.0.0",
-    "react-hook-form": "^7.60.0",
-    "react-i18next": "^15.6.0",
-    "react-icons": "^5.5.0",
-    "socket.io": "^4.8.1",
-    "socket.io-client": "^4.8.1",
-    "streamifier": "^0.1.1",
-    "stripe": "^18.3.0",
-    "zod": "^3.25.75",
-    "zustand": "^5.0.6"
-  },
-  "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
-    "@types/fluent-ffmpeg": "^2.1.27",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "@types/react-i18next": "^7.8.3",
-    "@types/streamifier": "^0.1.2",
-    "eslint": "^9",
-    "eslint-config-next": "15.3.5",
-    "i18next-parser": "^9.3.0",
-    "tailwindcss": "^4",
-    "typescript": "^5"
-  }
-}
-=======
-{
-  "name": "new_project",
-  "version": "0.1.0",
+  "name": "afroboost",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -93,38 +23,14 @@
     "firebase-admin": "^13.4.0",
     "framer-motion": "^12.23.0",
     "js-cookie": "^3.0.5",
-    "mongoose": "^8.16.2",
-    "next": "14.2.5",
-    "next-auth": "^4.24.11",
-    "next-intl": "^4.3.4",
-    "nodemailer": "^6.10.1",
-    "react": "18.2.0",
+    "next": "15.3.5",
+    "nodemailer": "^6.9.8",
+    "react": "^18.3.1",
     "react-apexcharts": "^1.7.0",
-    "react-dom": "18.2.0",
-    "react-hook-form": "^7.60.0",
-    "react-icons": "^5.5.0",
-    "stripe": "^18.3.0",
-    "zod": "^3.25.75",
-    "zustand": "^5.0.6"
-  },
-  "overrides": {
-  "react": "18.2.0",
-  "react-dom": "18.2.0"
-},
-  "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "eslint": "^9",
-    "eslint-config-next": "14.2.5",
-    "tailwindcss": "^4",
-    "typescript": "^5"
-  },
-  "engines": {
-    "node": ">=18.17.0"
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.51.4",
+    "react-i18next": "^15.0.1",
+    "i18next": "^23.12.2",
+    "typescript": "^5.6.3"
   }
 }
-
->>>>>>> ddd273af2a7b494359b5df1cd43dbc83468035f0
