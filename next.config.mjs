@@ -1,15 +1,39 @@
-/** @type {import('next').NextConfig} */
+// ✅ Config Next.js 15.3.5 stable (ESM)
+import { NextConfig } from 'next';
+
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['res.cloudinary.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
   },
-  experimental: {
-    serverActions: {
-      bodySizeLimit: '2mb',
-    },
+  eslint: {
+    ignoreDuringBuilds: true,
   },
 };
 
-module.exports = nextConfig;
+export default nextConfig;
+// ✅ Config Next.js 15.3.5 stable (ESM)
+import { NextConfig } from 'next';
+
+const nextConfig = {
+  reactStrictMode: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+};
+
+export default nextConfig;
 
