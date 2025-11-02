@@ -35,7 +35,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr">
-      <body className={`${poppins.variable} ${montserrat.variable} ${inter.variable} antialiased`}>
+      <body
+        className={`${poppins.variable} ${montserrat.variable} ${inter.variable} antialiased`}
+      >
         <NavigationErrorBoundary>
           <Providers>
             <PWAService />
