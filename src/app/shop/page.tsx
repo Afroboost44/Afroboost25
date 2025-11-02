@@ -11,7 +11,7 @@ export default function Shop() {
     { id: 3, name: 'Carte Réduc’ Afroboost', price: '100 CHF/an', image: '/images/card.png' },
   ];
 
-  return (<>  return (
+  return (
     <div className="min-h-screen bg-black text-white px-6 py-12">
       <motion.h1
         initial={{ opacity: 0, y: 20 }}
