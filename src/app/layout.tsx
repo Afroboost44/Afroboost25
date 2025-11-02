@@ -18,26 +18,25 @@ const poppins = Poppins({
 
 const montserrat = Montserrat({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-montserrat",
 });
 
 const inter = Inter({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
   title: "Afroboost",
-  description: "Danse Afrobeat et Fitness — Vibrez, Bougez, Boostez !",
+  description: "Danse Afrobeat & Fitness - Une expérience immersive unique.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr">
-      <body
-        className={`${poppins.variable} ${montserrat.variable} ${inter.variable} antialiased`}
-      >
+      <body className={`${poppins.variable} ${montserrat.variable} ${inter.variable} antialiased`}>
         <NavigationErrorBoundary>
           <Providers>
             <PWAService />
