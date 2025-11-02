@@ -9,7 +9,11 @@ export const metadata = {
   description: "Plateforme immersive de danse et fitness afrobeat",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="fr">
       <body className={inter.className}>
